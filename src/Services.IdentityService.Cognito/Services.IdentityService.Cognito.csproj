@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>462dd1a9-786a-4e68-b883-768596d43821</UserSecretsId>
+        <RootNamespace>Diploma1.IdentityService</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="4.0.0-preview.5" />
+        <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.0-preview.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.3" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+</Project>

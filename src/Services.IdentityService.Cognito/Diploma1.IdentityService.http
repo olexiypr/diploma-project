@@ -1,0 +1,6 @@
+@Diploma1.IdentityService_HostAddress = http://localhost:5010
+
+GET {{Diploma1.IdentityService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{761ADFC8-1F34-4729-B974-80B8F249A495}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diploma1.Topics", "Diploma1.Topics", "{C3D67935-FC18-4914-A3FF-0C8C3F4D2F3D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diploma1.Auth", "Diploma1.Auth", "{8346917B-5C90-43FF-A7EF-21EECB860BBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diploma1.LLM", "Diploma1.LLM", "{4DF0D842-5F2D-4BB8-AC5C-DCD98E0BAF42}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Diploma1.Messages", "Diploma1.Messages", "{94C35CFD-C9EE-4569-B9F2-1FA2C461DAC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.TopicsService", "Services.TopicsService\Services.TopicsService.csproj", "{F5D335AB-8CA5-4AA3-80E6-378A83B551E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.IdentityService.Cognito", "Services.IdentityService.Cognito\Services.IdentityService.Cognito.csproj", "{CCCE4C5A-54F9-499F-BB5E-DFCABD8E4464}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.MessagesService", "Services.MessagesService\Services.MessagesService.csproj", "{F562400A-6A2C-4E22-9961-C26F901D4A12}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5D335AB-8CA5-4AA3-80E6-378A83B551E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5D335AB-8CA5-4AA3-80E6-378A83B551E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5D335AB-8CA5-4AA3-80E6-378A83B551E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5D335AB-8CA5-4AA3-80E6-378A83B551E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCCE4C5A-54F9-499F-BB5E-DFCABD8E4464}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCCE4C5A-54F9-499F-BB5E-DFCABD8E4464}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCCE4C5A-54F9-499F-BB5E-DFCABD8E4464}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCCE4C5A-54F9-499F-BB5E-DFCABD8E4464}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F562400A-6A2C-4E22-9961-C26F901D4A12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F562400A-6A2C-4E22-9961-C26F901D4A12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F562400A-6A2C-4E22-9961-C26F901D4A12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F562400A-6A2C-4E22-9961-C26F901D4A12}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F5D335AB-8CA5-4AA3-80E6-378A83B551E3} = {C3D67935-FC18-4914-A3FF-0C8C3F4D2F3D}
+		{CCCE4C5A-54F9-499F-BB5E-DFCABD8E4464} = {8346917B-5C90-43FF-A7EF-21EECB860BBB}
+		{F562400A-6A2C-4E22-9961-C26F901D4A12} = {94C35CFD-C9EE-4569-B9F2-1FA2C461DAC8}
+	EndGlobalSection
+EndGlobal
