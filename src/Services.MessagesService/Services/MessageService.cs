@@ -2,15 +2,21 @@ using Services.MessagesService.Mappers;
 using Services.MessagesService.Repositories;
 using Services.MessagesService.RequestModels;
 using Services.MessagesService.ResponseModels;
+using Services.MessagesService.ServiceWrappers.IdentityService.HttpClients;
 
 namespace Services.MessagesService.Services;
 
-public class MessageService(IMessagesRepository messagesRepository, IMessageMapper messageMapper) : IMessageService
+public class MessageService(IMessagesRepository messagesRepository,
+    IMessageMapper messageMapper, IdentityServiceHttpClient identityServiceHttpClient, IBackgroundJobsSchedulerService backgroundJobsSchedulerService) : IMessageService
 {
-    public async Task<bool> Create(int topicId, int userId, CreateMessageRequestModel requestModel)
+    public async Task<MessageResponseModel> Create(int topicId, string cognitoUserId,
+        CreateMessageRequestModel requestModel)
     {
-        var messageEntity = messageMapper.Map(userId, topicId, requestModel);
-        return await messagesRepository.Create(topicId, userId, messageEntity);
+        var user = await identityServiceHttpClient.GetUserByCognitoId(cognitoUserId);
+        var messageEntity = messageMapper.Map(user.Id, topicId, requestModel);
+        await messagesRepository.Create(messageEntity);
+        await backgroundJobsSchedulerService.ScheduleNewMessageGenerationBackgroundJob(topicId);
+        return messageMapper.Map(messageEntity);
     }
 
     public async Task<MessageResponseModel> GetById(int topicId, string id)

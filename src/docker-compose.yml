@@ -39,7 +39,22 @@
         environment:
             - ASPNETCORE_ENVIRONMENT=Docker
             
-                
+            
+    rabbit-mq-management:
+        image: rabbitmq:4-management
+        restart: always
+        ports:
+            -   "5216:15672"
+            -   "5672:5672"
+        volumes:
+            - rabbitmq_data:/var/lib/rabbitmq
+            
+    rabbit-mq:
+        image: rabbitmq:latest
+        restart: always
+        ports:
+            -   "5672:5672"
+               
     auth-service-db:
         image: postgres
         restart: always
@@ -58,4 +73,6 @@ networks:
         
 volumes:
     pgdata:
+        driver: local
+    rabbitmq_data:
         driver: local

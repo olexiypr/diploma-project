@@ -11,12 +11,13 @@ using Services.MessagesService.Exceptions;
 using Services.MessagesService.Mappers;
 using Services.MessagesService.RequestModels;
 using Services.MessagesService.ResponseModels;
+using Services.MessagesService.Settings;
 
 namespace Services.MessagesService.Repositories;
 
 public class DynamoDbMessagesRepository(IMessageMapper messageMapper, IOptions<DynamoDbSettings> dynamoDbSettings, IAmazonDynamoDB amazonDynamoDb) : IMessagesRepository
 {
-    public async Task<bool> Create(int topicId, int usedId, MessageEntity messageEntity)
+    public async Task<bool> Create(MessageEntity messageEntity)
     {
         var requestAsJson = JsonSerializer.Serialize(messageEntity);
         var requestAsDocument = Document.FromJson(requestAsJson);

@@ -1,6 +1,7 @@
-using Services.MessagesService.S2SModels;
+using Services.MessagesService.ServiceWrappers.IdentityService.Exceptions;
+using Services.MessagesService.ServiceWrappers.IdentityService.Models;
 
-namespace Services.MessagesService.HttpClients;
+namespace Services.MessagesService.ServiceWrappers.IdentityService.HttpClients;
 
 public class IdentityServiceHttpClient(HttpClient httpClient)
 {
@@ -13,6 +14,6 @@ public class IdentityServiceHttpClient(HttpClient httpClient)
             return (await response.Content.ReadFromJsonAsync<UserModel>())!;
         }
 
-        return null;
+        throw new UserNotFoundException(userId);
     }
 }

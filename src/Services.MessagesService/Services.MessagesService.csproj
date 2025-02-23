@@ -11,6 +11,11 @@
         <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.0-preview.5" />
         <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.0-preview.5" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
+        <PackageReference Include="Quartz" Version="3.13.1" />
+        <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.13.1" />
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />
+        <PackageReference Include="Quartz.Serialization.Json" Version="3.13.1" />
+        <PackageReference Include="RabbitMQ.Client" Version="7.1.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
     </ItemGroup>
 
@@ -18,6 +23,15 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ServiceWrappers\LlmService\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\EventBus.RabbitMq\EventBus.RabbitMq.csproj" />
+      <ProjectReference Include="..\EventBus\EventBus.csproj" />
     </ItemGroup>
 
 </Project>
