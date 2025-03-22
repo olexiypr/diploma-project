@@ -6,6 +6,7 @@ namespace Diploma1.IdentityService.Services;
 public interface IAuthService
 {
     public Task<AuthenticationResultType> Login(LoginRequestModel loginRequestModel);
-    public Task<bool> Register(RegistrerRequestModel registerRequestModel);
+    public Task<bool> Register(RegisterRequestModel registerRequestModel);
+    public Task<AuthenticationResultType> RefreshToken(string refreshToken);
     Task<bool> ConfirmConfirmationCode(ConfirmConfirmationCodeRequestModel requestModel);
 }

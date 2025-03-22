@@ -107,6 +107,17 @@ builder.Services.AddQuartz(configurator =>
 builder.Services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 builder.Services.AddTransient<IBackgroundJobsSchedulerService, BackgroundJobsSchedulerService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowAll",
+        opt =>
+        {
+            opt.AllowAnyOrigin();
+            opt.AllowAnyHeader();
+            opt.AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -117,7 +128,7 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 

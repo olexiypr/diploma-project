@@ -4,7 +4,10 @@ using Amazon.Extensions.NETCore.Setup;
 using Amazon.Runtime;
 using Diploma1.IdentityService;
 using Diploma1.IdentityService.Services;
+using Diploma1.IdentityService.Settings;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,9 +39,29 @@ builder.Services.AddDbContext<IdentityServiceDbContext>(optionsBuilder =>
     optionsBuilder.UseNpgsql(connectionString);
 });
 
+builder.Services.AddSingleton<JwtTokenSettingsProvider>();
+
+var jwtTokenSettingsProvider = new JwtTokenSettingsProvider(builder.Configuration);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = jwtTokenSettingsProvider.GetCognitoTokenValidationParams();
+    });
+
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowAll",
+        opt =>
+        {
+            opt.AllowAnyOrigin();
+            opt.AllowAnyHeader();
+            opt.AllowAnyMethod();
+        });
+});
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
@@ -49,7 +72,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowAll");
 app.UseAuthorization();
 
 app.MapControllers();

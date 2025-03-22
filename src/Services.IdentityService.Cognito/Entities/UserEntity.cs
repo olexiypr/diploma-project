@@ -8,4 +8,5 @@ public class UserEntity
     public string LastName { get; set; }
     public string? RelativeAvatarPath { get; set; }
     public string CognitoId { get; set; }
+    public string RefreshToken { get; set; }
 }

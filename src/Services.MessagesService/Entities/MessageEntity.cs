@@ -14,5 +14,5 @@ public class MessageEntity
     public MessageCreators MessageCreator { get; set; }
     [JsonPropertyName("topicId")]
     [DynamoDBHashKey]
-    public int TopicId {get; set;}
+    public string TopicId {get; set;}
 }

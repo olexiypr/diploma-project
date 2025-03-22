@@ -1,6 +1,6 @@
 namespace Diploma1.IdentityService.RequestModels;
 
-public class RegistrerRequestModel
+public class RegisterRequestModel
 {
     public string Email { get; set; }
     public string Password { get; set; }

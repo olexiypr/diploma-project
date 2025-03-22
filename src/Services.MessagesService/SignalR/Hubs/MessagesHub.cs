@@ -27,7 +27,7 @@ public class MessagesHub(IMessageService messageService) : Hub<IMessagesClient>
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, topicId.ToString());
     }
 
-    public async Task CreateMessage(int topicId, CreateMessageRequestModel requestModel)
+    public async Task CreateMessage(string topicId, CreateMessageRequestModel requestModel)
     {
         //TODO: Verify that topic exists
         var cognitoUserId = Context.GetHttpContext()?.GetUserId();

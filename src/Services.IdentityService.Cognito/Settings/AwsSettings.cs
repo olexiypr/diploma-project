@@ -1,4 +1,4 @@
-namespace Diploma1.IdentityService;
+namespace Diploma1.IdentityService.Settings;
 
 public class AwsSettings
 {

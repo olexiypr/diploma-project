@@ -5,7 +5,8 @@ namespace Services.MessagesService.Services;
 
 public interface IMessageService
 {
-    public Task<MessageResponseModel> Create(int topicId, string cognitoUserId, CreateMessageRequestModel requestModel);
-    public Task<MessageResponseModel> GetById(int topicId, string id);
-    public Task<IEnumerable<MessageResponseModel>> GetMessagesByTopicId(int topicId);
+    public Task<MessageResponseModel> Create(string topicId, string cognitoUserId,
+        CreateMessageRequestModel requestModel);
+    public Task<MessageResponseModel> GetById(string topicId, string id);
+    public Task<IEnumerable<MessageResponseModel>> GetMessagesByTopicId(string topicId);
 }

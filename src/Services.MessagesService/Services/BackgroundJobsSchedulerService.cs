@@ -8,7 +8,7 @@ namespace Services.MessagesService.Services;
 public class BackgroundJobsSchedulerService(ISchedulerFactory schedulerFactory, IOptions<NewMessageGenerationBackgroundJobSettings> generationJobSettings) : IBackgroundJobsSchedulerService
 {
     private const string MessageGenerationBackgroundJobDataMapKey = "TopicId";
-    public async Task ScheduleNewMessageGenerationBackgroundJob(int topicId)
+    public async Task ScheduleNewMessageGenerationBackgroundJob(string topicId)
     {
         //var nextFireDatetime = DateTime.UtcNow + generationJobSettings.Value.GenerateNewMessageOffset;
         var nextFireDatetime = DateTime.UtcNow.AddSeconds(10);

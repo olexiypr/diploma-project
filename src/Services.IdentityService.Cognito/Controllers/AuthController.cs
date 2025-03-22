@@ -16,9 +16,15 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<bool> Register([FromBody] RegistrerRequestModel registerRequest)
+    public async Task<bool> Register([FromBody] RegisterRequestModel registerRequest)
     {
         return await authService.Register(registerRequest);
+    }
+
+    [HttpPost("refresh")]
+    public async Task<AuthenticationResultType> RefreshToken([FromBody] string refreshToken)
+    {
+        return await authService.RefreshToken(refreshToken);
     }
 
 

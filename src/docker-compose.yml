@@ -11,7 +11,7 @@
     topics-service:
         build:
             context: .
-            dockerfile: ../Diploma1/Services.TopicsService/Dockerfile
+            dockerfile: Services.TopicsService/Dockerfile
         ports:
             - "8080:8080"
         environment:
@@ -22,7 +22,7 @@
     auth-service:
         build:
             context: .
-            dockerfile: ../Diploma1/Services.IdentityService.Cognito/Dockerfile
+            dockerfile: Services.IdentityService.Cognito/Dockerfile
         ports:
             -   "5010:8080"
         environment:

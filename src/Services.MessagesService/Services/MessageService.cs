@@ -9,7 +9,7 @@ namespace Services.MessagesService.Services;
 public class MessageService(IMessagesRepository messagesRepository,
     IMessageMapper messageMapper, IdentityServiceHttpClient identityServiceHttpClient, IBackgroundJobsSchedulerService backgroundJobsSchedulerService) : IMessageService
 {
-    public async Task<MessageResponseModel> Create(int topicId, string cognitoUserId,
+    public async Task<MessageResponseModel> Create(string topicId, string cognitoUserId,
         CreateMessageRequestModel requestModel)
     {
         var user = await identityServiceHttpClient.GetUserByCognitoId(cognitoUserId);
@@ -19,13 +19,13 @@ public class MessageService(IMessagesRepository messagesRepository,
         return messageMapper.Map(messageEntity);
     }
 
-    public async Task<MessageResponseModel> GetById(int topicId, string id)
+    public async Task<MessageResponseModel> GetById(string topicId, string id)
     {
         var message = await messagesRepository.GetById(topicId, id);
         return messageMapper.Map(message);
     }
 
-    public async Task<IEnumerable<MessageResponseModel>> GetMessagesByTopicId(int topicId)
+    public async Task<IEnumerable<MessageResponseModel>> GetMessagesByTopicId(string topicId)
     {
         var messages = await messagesRepository.GetMessagesByTopicId(topicId);
         return messages.Select(messageMapper.Map);

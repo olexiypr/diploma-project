@@ -6,7 +6,7 @@ namespace Services.MessagesService.Mappers;
 
 public class MessageMapper : IMessageMapper
 {
-    public MessageEntity Map(int createdBy, int topicId, CreateMessageRequestModel model)
+    public MessageEntity Map(int createdBy, string topicId, CreateMessageRequestModel model)
     {
         return new MessageEntity
         {

@@ -31,7 +31,7 @@ public class DynamoDbMessagesRepository(IMessageMapper messageMapper, IOptions<D
         return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
     }
 
-    public async Task<MessageEntity> GetById(int topicId, string id)
+    public async Task<MessageEntity> GetById(string topicId, string id)
     {
         var hashKeyPropertyName = GetAttributeJsonPropertyName(typeof(MessageEntity), nameof(DynamoDBHashKeyAttribute));
         var rangeKeyPropertyName =
@@ -41,7 +41,7 @@ public class DynamoDbMessagesRepository(IMessageMapper messageMapper, IOptions<D
             TableName = dynamoDbSettings.Value.TableName,
             Key = new Dictionary<string, AttributeValue>
             {
-                {hashKeyPropertyName, new AttributeValue {N = topicId.ToString()}},
+                {hashKeyPropertyName, new AttributeValue {N = topicId}},
                 {rangeKeyPropertyName, new AttributeValue {S = id}}
             }
         };
@@ -54,7 +54,7 @@ public class DynamoDbMessagesRepository(IMessageMapper messageMapper, IOptions<D
         return JsonSerializer.Deserialize<MessageEntity>(Document.FromAttributeMap(response.Item).ToJson())!;
     }
 
-    public async Task<IEnumerable<MessageEntity>> GetMessagesByTopicId(int topicId)
+    public async Task<IEnumerable<MessageEntity>> GetMessagesByTopicId(string topicId)
     {
         var queryRequest = new QueryRequest
         {
@@ -64,7 +64,7 @@ public class DynamoDbMessagesRepository(IMessageMapper messageMapper, IOptions<D
             KeyConditionExpression = $"{GetAttributeJsonPropertyName(typeof(MessageEntity), nameof(DynamoDBHashKeyAttribute))} = :pkValue",
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
-                { ":pkValue", new AttributeValue {N = topicId.ToString()}}
+                { ":pkValue", new AttributeValue {S = topicId}}
             }
         };
         var response = await amazonDynamoDb.QueryAsync(queryRequest);

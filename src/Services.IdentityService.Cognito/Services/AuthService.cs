@@ -1,17 +1,15 @@
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
-using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
-using Diploma1.IdentityService.Entities;
 using Diploma1.IdentityService.RequestModels;
-using Microsoft.AspNetCore.Mvc;
+using Diploma1.IdentityService.Settings;
 using Microsoft.Extensions.Options;
 
 namespace Diploma1.IdentityService.Services;
 
-public class AuthService(IOptions<AwsSettings> awsSettings, IAmazonCognitoIdentityProvider cognito, IdentityServiceDbContext dbContext) : IAuthService
+public class AuthService(IOptions<AwsSettings> awsSettings, IAmazonCognitoIdentityProvider cognito, IUserService userService) : IAuthService
 {
     public async Task<AuthenticationResultType> Login(LoginRequestModel loginRequestModel)
     {
@@ -27,10 +25,15 @@ public class AuthService(IOptions<AwsSettings> awsSettings, IAmazonCognitoIdenti
             }
         };
         var response = await cognito.InitiateAuthAsync(authRequest);
+        if (response.HttpStatusCode == HttpStatusCode.OK)
+        {
+            await userService.SetRefreshTokenToDatabase(response.AuthenticationResult.RefreshToken, response.AuthenticationResult.IdToken);
+        }
+        
         return response.AuthenticationResult;
     }
 
-    public async Task<bool> Register(RegistrerRequestModel registerRequestModel)
+    public async Task<bool> Register(RegisterRequestModel registerRequestModel)
     {
         var singUpRequest = new SignUpRequest
         {
@@ -47,10 +50,27 @@ public class AuthService(IOptions<AwsSettings> awsSettings, IAmazonCognitoIdenti
         var response = await cognito.SignUpAsync(singUpRequest);
         if (response.HttpStatusCode != HttpStatusCode.OK)
             return false;
-        var userEntity = MapUser(response.UserSub, registerRequestModel);
-        await dbContext.AddAsync(userEntity);
-        await dbContext.SaveChangesAsync();
+        await userService.AddUserToDatabase(response.UserSub, registerRequestModel);
         return true;
+    }
+
+    public async Task<AuthenticationResultType> RefreshToken(string refreshToken)
+    {
+        var userId = await userService.GetUserCognitoIdByRefreshToken(refreshToken);
+        var authRequest = new InitiateAuthRequest
+        {
+            AuthFlow = AuthFlowType.REFRESH_TOKEN_AUTH,
+            ClientId = awsSettings.Value.AppClientId,
+            AuthParameters = new Dictionary<string, string>
+            {
+                {"REFRESH_TOKEN", refreshToken},
+                {"SECRET_HASH", CalculateHash(userId, awsSettings.Value.AppClientId, awsSettings.Value.AppSecretKey)}
+            }
+        };
+        
+        var response = await cognito.InitiateAuthAsync(authRequest);
+        //TODO: remove refresh token form db when it's expired
+        return response.AuthenticationResult;
     }
 
     public async Task<bool> ConfirmConfirmationCode(ConfirmConfirmationCodeRequestModel requestModel)
@@ -65,17 +85,6 @@ public class AuthService(IOptions<AwsSettings> awsSettings, IAmazonCognitoIdenti
 
         var response = await cognito.ConfirmSignUpAsync(confirmSignUpRequest);
         return response.HttpStatusCode == HttpStatusCode.OK;
-    }
-
-    private static UserEntity MapUser(string cognitoUserName, RegistrerRequestModel requestModel)
-    {
-        return new UserEntity
-        {
-            FirstName = requestModel.FirstName,
-            LastName = requestModel.LastName,
-            CognitoId = cognitoUserName,
-            Email = requestModel.Email,
-        };
     }
 
     private static string CalculateHash(string email, string clientId, string clientSecret)

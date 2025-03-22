@@ -6,7 +6,7 @@ public class NewMessageGenerationBackgroundJob : IJob
 {
     public Task Execute(IJobExecutionContext context)
     {
-        if (context.MergedJobDataMap.TryGetIntValue("TopicId", out var topicId))
+        if (context.MergedJobDataMap.TryGetString("TopicId", out var topicId))
         {
             
         }

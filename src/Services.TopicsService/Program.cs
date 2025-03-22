@@ -18,9 +18,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "AllowAll",
+        opt =>
+        {
+            opt.AllowAnyOrigin();
+            opt.AllowAnyHeader();
+            opt.AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
-
-
 
 var mongoDbService = app.Services.GetRequiredService<MongoDbService>();
 await mongoDbService.SeedData();
@@ -35,6 +44,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 
 app.UseAuthorization();
 
