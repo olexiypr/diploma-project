@@ -1,6 +1,6 @@
 using EventBus;
 
-namespace Services.LLM.EventBus.Events;
+namespace Services.LlmService.EventBus.Events;
 
 public class GenerateTextIntegrationEvent : IntegrationEvent
 {

@@ -1,6 +1,6 @@
-using Services.LLM.ResponseModels;
+using Services.LlmService.ResponseModels;
 
-namespace Services.LLM.Services;
+namespace Services.LlmService.Services;
 
 public interface ITextGenerationService
 {

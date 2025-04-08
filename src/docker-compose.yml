@@ -66,6 +66,37 @@
             -   "5430:5432"
         volumes:
             - ./pgdata:/var/lib/postgresql/data/pgdata
+            
+    llm-service-db:
+        image: pgvector/pgvector:pg17
+        restart: always
+        environment:
+            POSTGRES_USER: llm-service-pg
+            POSTGRES_PASSWORD: llm-service-pg
+            PGDATA: /var/lib/postgresql/data/pgdata
+        ports:
+            - "5429:5432"
+        volumes:
+            - ./llm-pgdata:/var/lib/postgresql/data/pgdata
+            - ./postgres/schema.sql:/scripts/initPgvector.sql
+            
+    neo4j:
+        image: neo4j:latest
+        ports:
+            - "7474:7474"
+            - "7687:7687"
+        environment:
+            NEO4J_AUTH: "neo4j/neo12345N"
+            NEO4JLABS_PLUGINS: '["apoc"]'
+            NEO4J_apoc_export_file_enabled: true
+            NEO4J_apoc_import_file_enabled: true
+            NEO4J_apoc_import_file_use__neo4j__config: true
+            NEO4J_dbms_security_procedures_unrestricted: apoc.*
+        volumes:
+            - ./neo4j/data:/data
+            - ./nep4j/plugins:/plugins
+            - .neo4j/config:/config
+        
                 
 networks:
     topics-service-network:

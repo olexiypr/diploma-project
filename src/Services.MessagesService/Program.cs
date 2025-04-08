@@ -93,6 +93,7 @@ builder.Services.AddSingleton<IEventBus>(services =>
     return new EventBusRabbitMq(connectionFactory, services, builder.Configuration["RabbitMq:QueueName"]);
 });
 
+
 builder.Services.AddTransient<TextGenerationCompletedEventHandler>();
 builder.Services.AddSignalR();
 

@@ -1,4 +1,4 @@
-namespace Services.LLM.ResponseModels;
+namespace Services.LlmService.ResponseModels;
 
 public class GeneratedTextResponseModel
 {
