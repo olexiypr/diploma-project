@@ -1,11 +1,16 @@
 using System.Text;
-using Services.LlmService.Services;
 
-namespace Services.LlmService.Helpers;
+namespace Services.LlmService.Services;
 
 public class RecursiveTextSplitter : ITextSplitter
-{ 
+{
     public IEnumerable<string> Split(string text, int maxTokens, int tokenOverlap = 0, string[]? splitDelimiters = null)
+    {
+        var splitResult = SplitRecursive(text, maxTokens, tokenOverlap, splitDelimiters);
+        var resultChunks = splitResult.Distinct().ToList();
+        return resultChunks;
+    }
+    private List<string> SplitRecursive(string text, int maxTokens, int tokenOverlap = 0, string[]? splitDelimiters = null)
     {
         if (GetTextSize(text) <= maxTokens)
         {
@@ -35,7 +40,7 @@ public class RecursiveTextSplitter : ITextSplitter
 
                     if (GetTextSize(part) > maxTokens)
                     {
-                        chunks.AddRange(Split(part, maxTokens, tokenOverlap, splitDelimiters.Skip(1).ToArray()));
+                        chunks.AddRange(SplitRecursive(part, maxTokens, tokenOverlap, splitDelimiters.Skip(1).ToArray()));
                     }
                     else
                     {
@@ -55,7 +60,8 @@ public class RecursiveTextSplitter : ITextSplitter
             }
         }
 
-        return chunks.Distinct();
+        //var resultChunks = chunks.Distinct().ToList();
+        return chunks;
     }
     
     private IEnumerable<string> ApplyTokenOverlap(IEnumerable<string> chunks, int tokenOverlap)

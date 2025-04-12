@@ -9,6 +9,8 @@ Logs/
 project.lock.json
 .vs/
 
+neo4j/
+
 # mstest test results
 TestResults
 

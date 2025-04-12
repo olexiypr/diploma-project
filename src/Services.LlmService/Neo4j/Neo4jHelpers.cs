@@ -1,9 +1,11 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using Neo4j.Driver;
+using Services.LlmService.Services;
 
-namespace Services.LlmService.Helpers;
+namespace Services.LlmService.Neo4j;
 
-public static class Neo4jHelpers
+public class Neo4jHelpers
 {
     public static string CreateName(string text)
     {
@@ -25,5 +27,11 @@ public static class Neo4jHelpers
             nameText.Append(lword.ToLower());
         }
         return Regex.Replace(nameText.ToString(), "[^a-zA-Z0-9_]", "");
+    }
+
+    public static async Task CreateVectorIndex(IDriver driver, ICypherQueryGenerator cypherQueryGenerator)
+    {
+        var createVectorIndex = cypherQueryGenerator.GenerateCypherQueryToCreateVectorIndex();
+        await driver.ExecutableQuery(createVectorIndex).ExecuteAsync();
     }
 }
