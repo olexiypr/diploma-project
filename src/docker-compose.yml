@@ -33,7 +33,7 @@
     messages-service:
         build:
             context: .
-            dockerfile: ../Diploma1/Services.MessagesService/Dockerfile
+            dockerfile: Services.MessagesService/Dockerfile
         ports:
             -   "5215:8080"
         environment:
@@ -66,19 +66,6 @@
             -   "5430:5432"
         volumes:
             - ./pgdata:/var/lib/postgresql/data/pgdata
-            
-    llm-service-db:
-        image: pgvector/pgvector:pg17
-        restart: always
-        environment:
-            POSTGRES_USER: llm-service-pg
-            POSTGRES_PASSWORD: llm-service-pg
-            PGDATA: /var/lib/postgresql/data/pgdata
-        ports:
-            - "5429:5432"
-        volumes:
-            - ./llm-pgdata:/var/lib/postgresql/data/pgdata
-            - ./postgres/schema.sql:/scripts/initPgvector.sql
             
     neo4j:
         image: neo4j:latest

@@ -77,4 +77,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<IdentityServiceDbContext>();
+dbContext.Database.Migrate();
+
 app.Run();

@@ -14,8 +14,7 @@ namespace Diploma1.IdentityService.Migrations
                 name: "RefreshToken",
                 table: "Users",
                 type: "text",
-                nullable: false,
-                defaultValue: "");
+                nullable: true);
         }
 
         /// <inheritdoc />

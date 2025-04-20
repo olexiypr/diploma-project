@@ -12,8 +12,12 @@
 
     <ItemGroup>
       <Reference Include="RabbitMQ.Client">
-        <HintPath>..\..\..\..\.nuget\packages\rabbitmq.client\7.1.0\lib\net8.0\RabbitMQ.Client.dll</HintPath>
+        <HintPath>..\..\..\..\.nuget\packages\rabbitmq.client\7.1.0\lib\net9.0\RabbitMQ.Client.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="RabbitMQ.Client" Version="7.1.2" />
     </ItemGroup>
 
 </Project>

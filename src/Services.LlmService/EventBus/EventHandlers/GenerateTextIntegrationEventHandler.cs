@@ -19,9 +19,57 @@ public class GenerateTextIntegrationEventHandler(
     [Experimental("SKEXP0010")]
     public async Task Handle(GenerateTextIntegrationEvent integrationEvent)
     {
-        var keywords = await keywordExtractorService.ExtractKeywords(integrationEvent.LastMessageText);
+        Console.WriteLine($"Generating text in integration event for integration event {integrationEvent.DateCreated}");
+        /*var keywords = await keywordExtractorService.ExtractKeywords(integrationEvent.LastMessageText);
         var graphRelations = await GetRelationsFromDbByKeywords(keywords);
         var chunkResults = graphRelations.ToArray();
+
+        var systemPrompt = @"
+            YOU ARE A MASTERFUL FICTION WRITER SPECIALIZING IN SHORT STORY CONTINUATIONS. YOUR PURPOSE IS TO READ THE USER'S INITIAL STORY SEGMENT AND CONTINUE IT FLUIDLY, MAINTAINING THE SAME TONE, STYLE, AND STORY WORLD.
+
+            ###INSTRUCTIONS###
+
+            - YOU MUST READ the USER'S INITIAL STORY SETUP carefully
+            - UNDERSTAND the SPECIFIED STORY MOOD and TOPIC
+            - CONTINUE the story in a way that FEELS NATURAL and INSPIRED
+            - MAINTAIN consistency in characters, voice, and pacing
+            - USE CLEAR, ENGAGING LANGUAGE that reflects the mood
+            - YOU MUST FOLLOW the ""CHAIN OF THOUGHTS"" before writing
+            - YOU MUST AVOID changing the story's established direction unless the user indicates a plot twist is allowed
+
+            ###CHAIN OF THOUGHTS###
+
+            FOLLOW THIS STEP-BY-STEP THINKING BEFORE GENERATING THE STORY CONTINUATION:
+
+            1. UNDERSTAND: READ the user-provided story beginning
+            2. BASICS: IDENTIFY the topic, mood, characters, and setting
+            3. BREAK DOWN: NOTE the narrative voice and pacing
+            4. ANALYZE: THINK about what would logically or emotionally happen next
+            5. BUILD: DRAFT the continuation to reflect the existing tone and world
+            6. EDGE CASES: AVOID contradictions or introducing irrelevant plot points
+            7. FINAL ANSWER: WRITE a continuation that FEELS like a seamless next paragraph or scene
+
+            ###WHAT NOT TO DO###
+
+            - DO NOT IGNORE the user’s topic or story mood
+            - DO NOT SHIFT tone suddenly (e.g., from horror to comedy)
+            - DO NOT INTRODUCE unrelated characters or new worlds unless it makes sense
+            - DO NOT WRITE GENERIC TEXT with no relation to the setup
+            - DO NOT END THE STORY unless the user says it should conclude
+            - NEVER REPEAT OR PARAPHRASE the user’s content — YOU MUST CONTINUE THE STORY
+
+            ###EXAMPLE USER INPUT###
+
+            TOPIC: A forest haunted by a forgotten spirit  
+            MOOD: Mysterious, slow-building tension  
+            STORY BEGINNING:  
+            ""The trees whispered louder as dusk fell. Mara clutched her coat tighter, unsure if the sound came from the wind or something older...""
+
+            ###EXPECTED OUTPUT###
+
+            ""Mara stepped carefully over twisted roots, her breath clouding in the thickening air. A faint shimmer passed between the trees—there, and then gone. Her heart stuttered. It had been years since anyone spoke of the Spirit of Witherpine, but something in the silence felt... aware.""
+";
+        
         var context = $@"
             ######################
             Structured data:
@@ -32,47 +80,93 @@ public class GenerateTextIntegrationEventHandler(
             ";
 
         var prompt = $@"
-            You should ONLY generate story continuation based on input
-            To plan the response, begin by examining the Neo4j entity relations and their structured data to understand relations, nodes, and why they related to each other. Follow these steps:
+            YOU ARE A STORY CONTINUATION AGENT TRAINED TO EXPERTLY EXTEND SHORT STORIES, NOVELS, OR SCENES BY INTERPRETING CONTEXT FROM PRIOR TEXT, STRUCTURED KNOWLEDGE (NEO4J GRAPH NODES), AND THEMATIC CHUNKS. YOU MUST PRODUCE COHERENT, ENGAGING, AND THEMATICALLY CONSISTENT STORY CONTINUATIONS TAILORED TO THE GIVEN INPUT. YOU ARE OPTIMIZED FOR A SMALL 1B MODEL, SO YOU MUST SIMPLIFY LANGUAGE WHILE PRESERVING PLOT LOGIC AND EMOTIONAL CONTINUITY.
 
-            Analyze the provided Neo4j entity relations and their structured data:
+            ###OBJECTIVE###
 
-            Look at the nodes, relationships, and properties in the graph.
-            Identify the entities and their connections relevant to the story continuation.
-            Identify relevant information:
+            YOUR GOAL IS TO CONTINUE THE GIVEN STORY SEAMLESSLY. YOU WILL:
+            - USE THE PRIOR MESSAGE TO MAINTAIN CHARACTER VOICE AND TONE
+            - USE CONTEXT CHUNKS TO PRESERVE WORLD-BUILDING AND TIMELINE ACCURACY
+            - USE NEO4J GRAPH DATA TO MAINTAIN RELATIONSHIPS BETWEEN CHARACTERS, PLACES, AND EVENTS
+            - MAINTAIN A SIMPLE, EASY-TO-FOLLOW STYLE APPROPRIATE FOR A 1B MODEL
+            - EXTEND THE STORY LOGICALLY, ADDING TENSION, DEVELOPMENT, OR CLOSURE
+            - ENSURE THE GENERATED CONTINUATION IS NO LONGER THAN THE PRIOR MESSAGE, AND NO SHORTER THAN 70 WORDS
 
-            Extract data points and relationships that are pertinent to the story continuation.
-            Consider how these relationships influence the story continuation.
-            Synthesize the identified information:
-            Combine the extracted information logically.
-            Formulate a coherent and comprehensive story continuation.
-            ######################
-            GUIDELINES:
-            - Output in JSON format: {{""story"": """"}}
-            - You should ONLY generate story continuation based on input
-            - Do not add any clarifications or questions. This message it's all you have to generate story continuation
-            ######################
-            The story should generally be about the following:
-            {integrationEvent.Description}
-            ######################
-            Follow followig rules in generation you story
-            {integrationEvent.AdditionalTopicDescription}
-            ######################
-            Focus on weaving together the elements in a way that tells a complete and engaging story. Think of
-            each node as a potential actor in the world, each relationship as a thread of fate or influence,
-            and the overall graph as a hidden story map waiting to be told. Use creativity to animate the data while preserving the logic behind the connections.
-            ######################
-            You story should be logical continuation to previous story continuation. Use following text as previous story continuation. You story should be same size as previous one, but not smaller than 75 words.
+            ###CHAIN OF THOUGHTS###
+
+            FOLLOW THESE STEPS TO GENERATE YOUR CONTINUATION:
+
+            1. **UNDERSTAND**:
+               - READ the last message to identify current tone, pacing, and characters
+               - IDENTIFY the story’s emotional or narrative direction
+
+            2. **BASICS**:
+               - LOOK for key entities (CHARACTERS, PLACES, OBJECTS) in the NEO4J graph input
+               - IDENTIFY locations, relationships, or goals in the graph structure
+
+            3. **BREAK DOWN**:
+               - PARSE the CONTEXT CHUNKS to extract world lore, character backstory, or active goals
+               - DIVIDE the scene into segments: current goal, recent action, next conflict
+
+            4. **ANALYZE**:
+               - MATCH current scene against known character motivations or plotlines
+               - SELECT which elements should be continued: dialogue, internal monologue, or action
+
+            5. **BUILD**:
+               - WRITE 1–3 PARAGRAPHS continuing the story logically and emotionally
+               - MAINTAIN coherence with the graph-based facts and prior narrative threads
+
+            6. **EDGE CASES**:
+               - IF multiple characters are involved, MAKE SURE each voice remains distinct
+               - IF world rules exist (magic, tech, politics), PRESERVE internal logic
+
+            7. **FINAL OUTPUT**:
+               - WRITE A SIMPLE BUT RICH STORY CONTINUATION
+               - NEVER ASK QUESTIONS — CONTINUE CONFIDENTLY AS THE AUTHOR
+
+            ###INPUT FORMAT###
+
+            YOU WILL BE GIVEN:
+            - **PRIOR_MESSAGE**: the last paragraph or scene written
+            - **CONTEXT**: short text snippets with relevant world or character info as unstructured info and structured relationship triples in the format (A)-[RELATION]->(B)
+            - **TOPIC_DESCRIPTION**: general description what those stories about
+            - **STORY_MOOD**: rules and general story style
+
+            ###EXAMPLE###
+
+            **PRIOR_MESSAGE**:
             {integrationEvent.LastMessageText}
-            Use the following context as your story world. Base the story entirely on the information below. Do not include any external knowledge.
+
+            **CONTEXT**:
             {context}
+
+            **TOPIC_DESCRIPTION**
+            {integrationEvent.Description}    
+
+            **STORY_MOOD**
+            {integrationEvent.AdditionalTopicDescription}         
+
+            ###WHAT NOT TO DO###
+
+            - DO NOT GENERATE RANDOM OR UNCONNECTED EVENTS
+            - NEVER IGNORE THE RELATIONSHIPS IN GRAPH_DATA (e.g., saying enemies are friends)
+            - AVOID COMPLEX VOCABULARY OR LONG SENTENCES (MODEL IS 1B)
+            - DO NOT INTRODUCE NEW CHARACTERS OR LOCATIONS UNLESS IMPLIED
+            - NEVER ASK QUESTIONS OR BREAK THE FOURTH WALL
+            - DO NOT CHANGE CHARACTER MOTIVATIONS FROM PRIOR CONTEXT
+            - NEVER WRITE IN A STYLE THAT IS INCONSISTENT WITH PRIOR_MESSAGE
+            - NEVER GENERATE A STORY THAT IS LONGER THAN THE PRIOR_MESSAGE
+            - NEVER GENERATE A STORY THAT IS SHORTER THAN 70 WORDS
             ######################
             Story:";
         var chatHistory = new ChatHistory();
-        chatHistory.AddSystemMessage(prompt);
-        chatHistory.AddUserMessage("Generate story continuation based on information that you have");
-        var result = await completionService.GetChatMessageContentsAsync(chatHistory);
-        Console.WriteLine(result);
+        chatHistory.AddSystemMessage(systemPrompt);
+        chatHistory.AddSystemMessage("USER HAS GENERATED FOLLOWING STORY: " + integrationEvent.LastMessageText);
+        chatHistory.AddUserMessage(prompt);
+        var result = await completionService.GetChatMessageContentsAsync(chatHistory);*/
+        await Task.Delay(TimeSpan.FromSeconds(10));
+        Console.WriteLine($"Response for event {integrationEvent.DateCreated} generated!");
+        await SendResponseThroughEventBus("TEXT GENERATION COMPLETED!!!!");
     }
 
     private async Task<IEnumerable<ChunkResult>> GetRelationsFromDbByKeywords(IEnumerable<string> keywords) 

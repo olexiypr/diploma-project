@@ -4,5 +4,7 @@ namespace Services.MessagesService.EventBus.Events;
 
 public class GenerateTextIntegrationEvent : IntegrationEvent
 {
-    public string Text { get; set; } = "Hello World!";
+    public string LastMessageText { get; set; }
+    public string Description { get; set; }
+    public string AdditionalTopicDescription { get; set; }
 }

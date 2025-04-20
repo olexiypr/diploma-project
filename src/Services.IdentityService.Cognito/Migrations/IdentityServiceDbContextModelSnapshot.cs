@@ -46,7 +46,6 @@ namespace Diploma1.IdentityService.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("RefreshToken")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("RelativeAvatarPath")

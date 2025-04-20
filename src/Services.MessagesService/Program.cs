@@ -94,7 +94,7 @@ builder.Services.AddSingleton<IEventBus>(services =>
 });
 
 
-builder.Services.AddTransient<TextGenerationCompletedEventHandler>();
+builder.Services.AddTransient<TextGenerationCompletedIntegrationEventHandler>();
 builder.Services.AddSignalR();
 
 
@@ -137,7 +137,7 @@ app.MapControllers();
 app.MapHub<MessagesHub>("message-hub");
 
 var eventBus = app.Services.GetRequiredService<IEventBus>();
-await eventBus.Subscribe<TextGenerationCompletedIntegrationEvent, TextGenerationCompletedEventHandler>();
+await eventBus.Subscribe<TextGenerationCompletedIntegrationEvent, TextGenerationCompletedIntegrationEventHandler>();
 
 
 

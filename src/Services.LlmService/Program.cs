@@ -22,7 +22,7 @@ using Services.LlmService.Services;
 var builder = Host.CreateDefaultBuilder(args);
 
 var env = Environment.GetEnvironmentVariable("APP_ENVIRONMENT");
-Console.WriteLine("Run Services.IdentityService.Cognito with Environment - " + env);
+Console.WriteLine("Run Services.IdentityService.LlmService with Environment - " + env);
 
 builder.ConfigureAppConfiguration(configurationBuilder =>
 {
@@ -89,16 +89,12 @@ builder.ConfigureServices((context, services) =>
         .AddOllamaTextEmbeddingGeneration(modelId: "nomic-embed-text", endpoint: llmHost);
 });
 
-
-
-
-
 var host = builder.Build();
 
 var eventBus = host.Services.GetRequiredService<IEventBus>();
-//await eventBus.Subscribe<GenerateTextIntegrationEvent, GenerateTextIntegrationEventHandler>();
-//await eventBus.Subscribe<AddNewMessageIntegrationEvent, AddNewMessageIntegrationEventHandler>();
-//await eventBus.Subscribe<CreateNewTopicIntegrationEvent, CreateNewTopicIntegrationEventHandler>();
+await eventBus.Subscribe<GenerateTextIntegrationEvent, GenerateTextIntegrationEventHandler>();
+await eventBus.Subscribe<AddNewMessageIntegrationEvent, AddNewMessageIntegrationEventHandler>();
+await eventBus.Subscribe<CreateNewTopicIntegrationEvent, CreateNewTopicIntegrationEventHandler>();
 
 var scope = host.Services.CreateScope();
 
@@ -126,12 +122,12 @@ var createNewTopic = new CreateNewTopicIntegrationEvent
 var generateTextIntegrationEventHandler = scope.ServiceProvider.GetRequiredService<GenerateTextIntegrationEventHandler>();
 
 #pragma warning disable SKEXP0010
-await generateTextIntegrationEventHandler.Handle(new GenerateTextIntegrationEvent
+/*await generateTextIntegrationEventHandler.Handle(new GenerateTextIntegrationEvent
 {
     LastMessageText = createNewTopic.Description,
     Description = createNewTopic.Description,
     AdditionalTopicDescription = createNewTopic.AdditionalTopicDescription
-});
+});*/
 #pragma warning restore SKEXP0010
 
 var textSplitter = scope.ServiceProvider.GetRequiredService<ITextSplitter>();

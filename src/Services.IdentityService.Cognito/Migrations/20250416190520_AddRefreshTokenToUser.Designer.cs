@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Diploma1.IdentityService.Migrations
 {
     [DbContext(typeof(IdentityServiceDbContext))]
-    [Migration("20250320183137_AddRefreshTokenToUser")]
+    [Migration("20250416190520_AddRefreshTokenToUser")]
     partial class AddRefreshTokenToUser
     {
         /// <inheritdoc />
@@ -49,7 +49,6 @@ namespace Diploma1.IdentityService.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("RefreshToken")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("RelativeAvatarPath")

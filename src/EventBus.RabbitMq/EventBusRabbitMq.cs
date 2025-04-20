@@ -106,6 +106,7 @@ public class EventBusRabbitMq : IEventBus, IDisposable, IAsyncDisposable
         }
         var eventMessage = Encoding.UTF8.GetString(@event.Body.Span);
         await HandleEvent(@event.RoutingKey, eventMessage);
+        await _channel.BasicAckAsync(@event.DeliveryTag, false);
     }
 
     private async Task BindQueue(string eventName)
@@ -114,7 +115,6 @@ public class EventBusRabbitMq : IEventBus, IDisposable, IAsyncDisposable
         {
             await TryConnect();
         }
-        
         await _channel.QueueBindAsync(queue: _queueName, exchange: ExchangeName, routingKey: eventName);
     }
 
@@ -139,6 +139,8 @@ public class EventBusRabbitMq : IEventBus, IDisposable, IAsyncDisposable
 
     private async Task HandleEvent(string eventName, string eventText)
     {
+        var assemblyName = Assembly.GetEntryAssembly().GetName().Name;
+        Console.WriteLine(assemblyName);
         var eventType = Assembly.GetEntryAssembly()?.GetTypes().FirstOrDefault(t => t.Name == eventName);
         var eventHandlerType = Assembly.GetEntryAssembly()?.GetTypes()
             .FirstOrDefault(t => t.GetInterfaces().Length > 0 && 
@@ -158,6 +160,7 @@ public class EventBusRabbitMq : IEventBus, IDisposable, IAsyncDisposable
         }
         
         var integrationEvent = JsonSerializer.Deserialize(eventText, eventType, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        Console.WriteLine($"Method: {method?.Name} should be invoked for event: {eventName}");
         await (Task)method.Invoke(handler, new []{integrationEvent});
     }
 }
