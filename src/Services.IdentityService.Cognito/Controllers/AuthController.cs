@@ -16,7 +16,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<bool> Register([FromBody] RegisterRequestModel registerRequest)
+    public async Task<string> Register([FromBody] RegisterRequestModel registerRequest)
     {
         return await authService.Register(registerRequest);
     }

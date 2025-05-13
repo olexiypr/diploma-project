@@ -22,4 +22,10 @@ public class UsersController(IUserService userService) : ControllerBase
     {
         return await userService.GetUserInfoById(HttpContext.User.GetUserId());
     }
+
+    [HttpGet("isAdmin/{id:guid}")]
+    public async Task<bool> IsAdmin(Guid id)
+    {
+        return await userService.IsAdmin(id.ToString());
+    }
 }

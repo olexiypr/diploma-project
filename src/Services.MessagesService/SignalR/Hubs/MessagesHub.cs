@@ -15,10 +15,10 @@ public class MessagesHub(IMessageService messageService) : Hub<IMessagesClient>
         await base.OnConnectedAsync();
     }
 
-    public async Task OpenTopic(int topicId)
+    public async Task OpenTopic(string topicId)
     {
         //TODO: Verify that topic exists
-        await Groups.AddToGroupAsync(Context.ConnectionId, topicId.ToString());
+        await Groups.AddToGroupAsync(Context.ConnectionId, topicId);
     }
 
     public async Task CloseTopic(int topicId)
@@ -36,7 +36,7 @@ public class MessagesHub(IMessageService messageService) : Hub<IMessagesClient>
             throw new UnauthorizedAccessException();
         }
         var result = await messageService.Create(topicId, cognitoUserId, requestModel);
-        await Clients.Group(topicId.ToString()).ReceiveMessageCreated(result);
-        await Clients.GroupExcept(topicId.ToString(), []).ReceiveMessageCreated(result);
+        await Clients.Group(topicId.ToString()).ReceiveMessage(result);
+        //await Clients.GroupExcept(topicId.ToString(), []).ReceiveMessage(result);
     }
 }

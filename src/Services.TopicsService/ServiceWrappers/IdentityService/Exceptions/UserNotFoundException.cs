@@ -1,3 +1,3 @@
-namespace Services.MessagesService.ServiceWrappers.IdentityService.Exceptions;
+namespace Services.Topics.ServiceWrappers.IdentityService.Exceptions;
 
 public class UserNotFoundException(string userId) : Exception($"User {userId} was not found");

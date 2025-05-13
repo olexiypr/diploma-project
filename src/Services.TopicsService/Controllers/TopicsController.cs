@@ -1,6 +1,8 @@
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Topics.Entities;
+using Services.Topics.RequestModels;
 using Services.Topics.Services;
 
 namespace Services.Topics.Controllers;
@@ -28,8 +30,9 @@ public class TopicsController(ITopicsService topicsService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<TopicEntity> Create([FromBody] string title)
+    [Authorize(Policy = "AdminAccess")]
+    public async Task<TopicEntity> Create([FromBody] CreateTopicRequestModel createTopicRequestModel)
     {
-        return await topicsService.Create(title);
+        return await topicsService.Create(createTopicRequestModel);
     }
 }

@@ -1,4 +1,5 @@
 using Services.Topics.Entities;
+using Services.Topics.RequestModels;
 
 namespace Services.Topics.Services;
 
@@ -14,8 +15,8 @@ public class TopicsService(MongoDbService mongoDbService) : ITopicsService
         return await mongoDbService.GetById(id);
     }
 
-    public async Task<TopicEntity> Create(string title)
+    public async Task<TopicEntity> Create(CreateTopicRequestModel createTopicRequestModel)
     {
-        return await mongoDbService.Create(title);
+        return await mongoDbService.Create(createTopicRequestModel);
     }
 }

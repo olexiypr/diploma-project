@@ -1,9 +1,9 @@
 using Services.MessagesService.ServiceWrappers.IdentityService.Exceptions;
 using Services.MessagesService.ServiceWrappers.IdentityService.Models;
 
-namespace Services.MessagesService.ServiceWrappers.IdentityService.HttpClients;
+namespace Services.MessagesService.ServiceWrappers.IdentityService.HttpClient;
 
-public class IdentityServiceHttpClient(HttpClient httpClient)
+public class IdentityServiceHttpClient(System.Net.Http.HttpClient httpClient)
 {
     public async Task<UserModel> GetUserByCognitoId(string userId)
     {

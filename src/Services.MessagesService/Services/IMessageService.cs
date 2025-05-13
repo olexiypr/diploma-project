@@ -7,6 +7,8 @@ public interface IMessageService
 {
     public Task<MessageResponseModel> Create(string topicId, string cognitoUserId,
         CreateMessageRequestModel requestModel);
+
+    Task<MessageResponseModel> CreateLlmMessage(string topicId, CreateMessageRequestModel requestModel);
     public Task<MessageResponseModel> GetById(string topicId, string id);
     public Task<IEnumerable<MessageResponseModel>> GetMessagesByTopicId(string topicId);
 }

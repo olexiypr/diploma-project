@@ -7,5 +7,6 @@ namespace Services.MessagesService.Mappers;
 public interface IMessageMapper
 {
     MessageEntity Map(int createdBy, string topicId, CreateMessageRequestModel model);
+    MessageEntity MapLlm(string topicId, CreateMessageRequestModel model);
     MessageResponseModel Map(MessageEntity entity);
 }

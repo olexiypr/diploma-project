@@ -11,6 +11,7 @@ namespace Diploma1.IdentityService.Services;
 
 public class UserService(IdentityServiceDbContext dbContext, JwtTokenSettingsProvider jwtTokenSettingsProvider) : IUserService
 {
+    private readonly string[] _adminEmails = new string[] {"aloshaprokopenko5@gmail.com"};
     public async Task AddUserToDatabase(string cognitoId, RegisterRequestModel registerRequestModel)
     {
         var userEntity = MapUser(cognitoId, registerRequestModel);
@@ -59,6 +60,12 @@ public class UserService(IdentityServiceDbContext dbContext, JwtTokenSettingsPro
         return MapToUserInfoResponseModel(user);
     }
 
+    public async Task<bool> IsAdmin(string cognitoId)
+    {
+        var user = await GetUserByCognitoIdOrThrowExIfNotExists(cognitoId);
+        return user.Role == Roles.Admin;
+    }
+
     private UserResponseModel MapToUserResponseModel(UserEntity userEntity)
     {
         return new UserResponseModel
@@ -77,7 +84,7 @@ public class UserService(IdentityServiceDbContext dbContext, JwtTokenSettingsPro
         };
     }
     
-    private static UserEntity MapUser(string cognitoUserName, RegisterRequestModel requestModel)
+    private UserEntity MapUser(string cognitoUserName, RegisterRequestModel requestModel)
     {
         return new UserEntity
         {
@@ -85,6 +92,7 @@ public class UserService(IdentityServiceDbContext dbContext, JwtTokenSettingsPro
             LastName = requestModel.LastName,
             CognitoId = cognitoUserName,
             Email = requestModel.Email,
+            Role = _adminEmails.Any(x => x == requestModel.Email) ? Roles.Admin : Roles.User,
         };
     }
 

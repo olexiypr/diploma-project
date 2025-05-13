@@ -4,5 +4,5 @@ namespace Services.MessagesService.SignalR.Clients;
 
 public interface IMessagesClient
 {
-    Task ReceiveMessageCreated(MessageResponseModel responseModel);
+    Task ReceiveMessage(MessageResponseModel responseModel);
 }

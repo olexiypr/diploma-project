@@ -18,6 +18,18 @@ public class MessageMapper : IMessageMapper
         };
     }
 
+    public MessageEntity MapLlm(string topicId, CreateMessageRequestModel model)
+    {
+        return new MessageEntity
+        {
+            Id = Guid.NewGuid().ToString(),
+            CreatedBy = 0,
+            TopicId = topicId,
+            Text = model.Text,
+            MessageCreator = MessageCreators.Llm
+        };
+    }
+
     public MessageResponseModel Map(MessageEntity entity)
     {
         return new MessageResponseModel
@@ -26,7 +38,8 @@ public class MessageMapper : IMessageMapper
             TopicId = entity.TopicId,
             CreatedBy = entity.CreatedBy,
             DateCreated = entity.DateCreated,
-            Text = entity.Text
+            Text = entity.Text,
+            Creator = entity.MessageCreator
         };
     }
 }

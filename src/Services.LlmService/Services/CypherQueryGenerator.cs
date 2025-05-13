@@ -67,7 +67,7 @@ public class CypherQueryGenerator(IEmbeddingGenerationService embeddingGeneratio
         return entityCypherText;
     }
 
-    public async Task<string> GenerateCypherQueryForVectorSearchWord(string word)
+    public async Task<string> GenerateCypherQueryForVectorSearchWord(string word, string topicId)
     {
         var keywordEmbedding = await embeddingGenerationService.GenerateEmbedding(word);
         var query = $@"
@@ -78,7 +78,8 @@ public class CypherQueryGenerator(IEmbeddingGenerationService embeddingGeneratio
                                        question_embedding
                                        ) 
                                    YIELD node AS e1, score
-                                   MATCH (e1)-[r]-(e2:ENTITY)-[r2:{DEFAULT_RELATION_WITH_TOPIC_NAME}]->(dc)
+                                   MATCH (e1)-[r]-(e2:ENTITY)-[r2:{DEFAULT_RELATION_WITH_TOPIC_NAME}]->(dc:{DEFAULT_CHUNK_VARIABLE_NAME})
+                                   WHERE dc.topicId = {topicId}
                                    RETURN '(' + COALESCE(e1.name,'') + ')-[:' + COALESCE(type(r),'') + ']->(' + COALESCE(e2.name,'') + ')' as triplet, dc.text as text
                                ";
         return query;

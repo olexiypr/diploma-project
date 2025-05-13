@@ -13,7 +13,8 @@ using Services.MessagesService.EventBus.Events;
 using Services.MessagesService.Mappers;
 using Services.MessagesService.Repositories;
 using Services.MessagesService.Services;
-using Services.MessagesService.ServiceWrappers.IdentityService.HttpClients;
+using Services.MessagesService.ServiceWrappers.IdentityService.HttpClient;
+using Services.MessagesService.ServiceWrappers.TopicsService.HttpClient;
 using Services.MessagesService.Settings;
 using Services.MessagesService.SignalR.Hubs;
 
@@ -79,6 +80,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddHttpClient<IdentityServiceHttpClient>(c => 
     c.BaseAddress = new Uri(builder.Configuration["IdentityService:BaseUrl"]!));
 
+builder.Services.AddHttpClient<TopicsServiceHttpClient>(c =>
+    c.BaseAddress = new Uri(builder.Configuration["TopicsService:BaseUrl"]!));
+
 builder.Services.AddSingleton<IEventBus>(services =>
 {
     var connectionFactory = new ConnectionFactory();
@@ -113,7 +117,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: "AllowAll",
         opt =>
         {
-            opt.AllowAnyOrigin();
+            opt.SetIsOriginAllowed(origin => true);
+            opt.AllowCredentials();
             opt.AllowAnyHeader();
             opt.AllowAnyMethod();
         });

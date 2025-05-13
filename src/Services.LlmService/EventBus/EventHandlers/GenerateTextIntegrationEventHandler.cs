@@ -20,8 +20,8 @@ public class GenerateTextIntegrationEventHandler(
     public async Task Handle(GenerateTextIntegrationEvent integrationEvent)
     {
         Console.WriteLine($"Generating text in integration event for integration event {integrationEvent.DateCreated}");
-        /*var keywords = await keywordExtractorService.ExtractKeywords(integrationEvent.LastMessageText);
-        var graphRelations = await GetRelationsFromDbByKeywords(keywords);
+        var keywords = await keywordExtractorService.ExtractKeywords(integrationEvent.LastMessageText);
+        var graphRelations = await GetRelationsFromDbByKeywordsForTopic(keywords, integrationEvent.TopicId);
         var chunkResults = graphRelations.ToArray();
 
         var systemPrompt = @"
@@ -163,18 +163,18 @@ public class GenerateTextIntegrationEventHandler(
         chatHistory.AddSystemMessage(systemPrompt);
         chatHistory.AddSystemMessage("USER HAS GENERATED FOLLOWING STORY: " + integrationEvent.LastMessageText);
         chatHistory.AddUserMessage(prompt);
-        var result = await completionService.GetChatMessageContentsAsync(chatHistory);*/
-        await Task.Delay(TimeSpan.FromSeconds(10));
+        var result = await completionService.GetChatMessageContentsAsync(chatHistory);
         Console.WriteLine($"Response for event {integrationEvent.DateCreated} generated!");
-        await SendResponseThroughEventBus("TEXT GENERATION COMPLETED!!!!");
+        await SendResponseThroughEventBus(result[0].ToString(), integrationEvent.TopicId);
     }
 
-    private async Task<IEnumerable<ChunkResult>> GetRelationsFromDbByKeywords(IEnumerable<string> keywords) 
+    private async Task<IEnumerable<ChunkResult>> GetRelationsFromDbByKeywordsForTopic(IEnumerable<string> keywords,
+        string topicId) 
     {
         var uniqueNodes = new HashSet<ChunkResult>();
         foreach (var keyword in keywords)
         {
-            var question = await cypherQueryGenerator.GenerateCypherQueryForVectorSearchWord(keyword);
+            var question = await cypherQueryGenerator.GenerateCypherQueryForVectorSearchWord(keyword, topicId);
             var chunkResult = await driver.ExecutableQuery(question).ExecuteAsync();
 
             if (!chunkResult.Result.Any())
@@ -196,11 +196,12 @@ public class GenerateTextIntegrationEventHandler(
         return new ChunkResult(tripletValue, chunkTextValue);
     }
 
-    private async Task SendResponseThroughEventBus(string generatedText)
+    private async Task SendResponseThroughEventBus(string generatedText, string topicId)
     {
         var textGenerationCompletedIntegrationEvent = new TextGenerationCompletedIntegrationEvent
         {
-            Text = generatedText
+            Text = generatedText,
+            TopicId = topicId
         };
 
         await eventBus.Publish(textGenerationCompletedIntegrationEvent);

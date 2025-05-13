@@ -33,7 +33,7 @@ public class AuthService(IOptions<AwsSettings> awsSettings, IAmazonCognitoIdenti
         return response.AuthenticationResult;
     }
 
-    public async Task<bool> Register(RegisterRequestModel registerRequestModel)
+    public async Task<string> Register(RegisterRequestModel registerRequestModel)
     {
         var singUpRequest = new SignUpRequest
         {
@@ -45,13 +45,13 @@ public class AuthService(IOptions<AwsSettings> awsSettings, IAmazonCognitoIdenti
             {
                 new AttributeType {Name = "given_name", Value = registerRequestModel.FirstName},
                 new AttributeType {Name = "family_name", Value = registerRequestModel.LastName}
-            }
+            },
         };
         var response = await cognito.SignUpAsync(singUpRequest);
         if (response.HttpStatusCode != HttpStatusCode.OK)
-            return false;
+            throw new InvalidOperationException();
         await userService.AddUserToDatabase(response.UserSub, registerRequestModel);
-        return true;
+        return response.UserSub;
     }
 
     public async Task<AuthenticationResultType> RefreshToken(string refreshToken)

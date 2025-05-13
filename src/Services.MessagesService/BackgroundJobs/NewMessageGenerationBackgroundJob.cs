@@ -24,6 +24,7 @@ public class NewMessageGenerationBackgroundJob(IEventBus eventBus) : IJob
                 LastMessageText = textToTest,
                 Description = createNewTopic.Description,
                 AdditionalTopicDescription = createNewTopic.AdditionalTopicDescription,
+                TopicId = topicId
             };
             Console.WriteLine($"Job NewMessageGenerationBackgroundJob has been fired at {DateTime.Now}");
             await eventBus.Publish(newMessageEvent);

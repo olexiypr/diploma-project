@@ -11,7 +11,7 @@ public class BackgroundJobsSchedulerService(ISchedulerFactory schedulerFactory, 
     public async Task ScheduleNewMessageGenerationBackgroundJob(string topicId)
     {
         //var nextFireDatetime = DateTime.UtcNow + generationJobSettings.Value.GenerateNewMessageOffset;
-        var nextFireDatetime = DateTime.UtcNow.AddSeconds(10);
+        var nextFireDatetime = DateTime.UtcNow + TimeSpan.FromSeconds(1);
         var scheduler = await schedulerFactory.GetScheduler();
         var jobs = await scheduler.GetCurrentlyExecutingJobs();
         var existingJob = jobs.FirstOrDefault(j => j.MergedJobDataMap.ContainsKey(MessageGenerationBackgroundJobDataMapKey) &&

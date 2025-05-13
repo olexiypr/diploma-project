@@ -10,4 +10,5 @@ public interface IUserService
     Task<UserResponseModel> GetUserByCognitoId(string cognitoId);
     Task<string> GetUserCognitoIdByRefreshToken(string refreshToken);
     Task<UserInfoResponseModel> GetUserInfoById(string cognitoId);
+    Task<bool> IsAdmin(string cognitoId);
 }

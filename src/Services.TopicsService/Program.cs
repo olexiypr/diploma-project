@@ -1,5 +1,6 @@
 using Services.Topics;
 using Services.Topics.Services;
+using Services.Topics.ServiceWrappers.IdentityService.HttpClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +15,21 @@ builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("Mo
 builder.Services.AddTransient<ITopicsService, TopicsService>(); 
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddControllers();
+builder.Services.AddHttpClient<IdentityServiceHttpClient>(c => 
+    c.BaseAddress = new Uri(builder.Configuration["IdentityService:BaseUrl"]!));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminAccess", policy => policy.RequireAssertion(async context =>
+    {
+        var httpClient = new HttpClient();
+        httpClient.BaseAddress = new Uri(builder.Configuration["IdentityService:BaseUrl"]!);
+        var identityServiceHttpClient = new IdentityServiceHttpClient(httpClient);
+        return await identityServiceHttpClient.IsUserAdmin(context.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")!.Value);
+    }));
+});
 
 builder.Services.AddCors(options =>
 {

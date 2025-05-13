@@ -2,7 +2,7 @@ using Services.MessagesService.Mappers;
 using Services.MessagesService.Repositories;
 using Services.MessagesService.RequestModels;
 using Services.MessagesService.ResponseModels;
-using Services.MessagesService.ServiceWrappers.IdentityService.HttpClients;
+using Services.MessagesService.ServiceWrappers.IdentityService.HttpClient;
 
 namespace Services.MessagesService.Services;
 
@@ -14,6 +14,14 @@ public class MessageService(IMessagesRepository messagesRepository,
     {
         var user = await identityServiceHttpClient.GetUserByCognitoId(cognitoUserId);
         var messageEntity = messageMapper.Map(user.Id, topicId, requestModel);
+        await messagesRepository.Create(messageEntity);
+        //await backgroundJobsSchedulerService.ScheduleNewMessageGenerationBackgroundJob(topicId);
+        return messageMapper.Map(messageEntity);
+    }
+    
+    public async Task<MessageResponseModel> CreateLlmMessage(string topicId, CreateMessageRequestModel requestModel)
+    {
+        var messageEntity = messageMapper.MapLlm(topicId, requestModel);
         await messagesRepository.Create(messageEntity);
         await backgroundJobsSchedulerService.ScheduleNewMessageGenerationBackgroundJob(topicId);
         return messageMapper.Map(messageEntity);

@@ -9,4 +9,5 @@ public class UserEntity
     public string? RelativeAvatarPath { get; set; }
     public string CognitoId { get; set; }
     public string? RefreshToken { get; set; }
+    public Roles Role { get; set; }
 }

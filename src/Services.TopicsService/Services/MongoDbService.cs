@@ -2,6 +2,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Services.Topics.Entities;
+using Services.Topics.RequestModels;
 
 namespace Services.Topics.Services;
 
@@ -55,11 +56,13 @@ public class MongoDbService
         return await _topics.Find(t => t.Id == id).FirstOrDefaultAsync();
     }
 
-    public async Task<TopicEntity> Create(string title)
+    public async Task<TopicEntity> Create(CreateTopicRequestModel createTopicRequestModel)
     {
         var topicToCreate = new TopicEntity()
         {
-            Name = title,
+            Name = createTopicRequestModel.Name,
+            Description = createTopicRequestModel.Description,
+            AdditionalDescription = createTopicRequestModel.AdditionalDescription,
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
         };
