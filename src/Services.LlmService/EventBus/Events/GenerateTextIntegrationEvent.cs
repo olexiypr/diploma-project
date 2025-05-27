@@ -8,4 +8,5 @@ public class GenerateTextIntegrationEvent : IntegrationEvent
     public string TopicId { get; set; }
     public string Description { get; set; }
     public string AdditionalTopicDescription { get; set; }
+    public string? PreviousLlmMessage { get; set; }
 }

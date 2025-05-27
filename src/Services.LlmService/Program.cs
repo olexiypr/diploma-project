@@ -5,12 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Embeddings;
-using Microsoft.SemanticKernel.TextGeneration;
 using Neo4j.Driver;
 using RabbitMQ.Client;
 using Services.LlmService;
+using Services.LlmService.EventBus.Decorators;
 using Services.LlmService.EventBus.EventHandlers;
 using Services.LlmService.EventBus.Events;
 using Services.LlmService.Neo4j;
@@ -48,7 +46,7 @@ builder.ConfigureServices((context, services) =>
             connectionFactory.Port = int.Parse(context.Configuration["RabbitMq:Port"]!);
         }
 
-        return new EventBusRabbitMq(connectionFactory, serviceProvider, context.Configuration["RabbitMq:QueueName"]!);
+        return new EventBusDecorator(connectionFactory, serviceProvider, context.Configuration["RabbitMq:QueueName"]!);
     });
 
     services.AddTransient<ITextSplitter, RecursiveTextSplitter>();
@@ -83,9 +81,15 @@ builder.ConfigureServices((context, services) =>
     });
 
     var llmHost = new Uri(context.Configuration["Llm:Host"] ?? throw new ArgumentException());
+
+    var hhtpClient = new HttpClient
+    {
+        BaseAddress = llmHost,
+        Timeout = TimeSpan.FromMinutes(5)
+    };
     
     services.AddKernel()
-        .AddOllamaChatCompletion(modelId: "gemma3:1b", endpoint: llmHost)
+        .AddOllamaChatCompletion(httpClient: hhtpClient, modelId: "gemma3:4b")
         .AddOllamaTextEmbeddingGeneration(modelId: "nomic-embed-text", endpoint: llmHost);
 });
 

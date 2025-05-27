@@ -137,7 +137,7 @@ public class EventBusRabbitMq : IEventBus, IDisposable, IAsyncDisposable
         }
     }
 
-    private async Task HandleEvent(string eventName, string eventText)
+    protected virtual async Task HandleEvent(string eventName, string eventText)
     {
         var assemblyName = Assembly.GetEntryAssembly().GetName().Name;
         Console.WriteLine(assemblyName);

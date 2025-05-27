@@ -18,5 +18,6 @@ public class TextGenerationCompletedIntegrationEventHandler(IHubContext<Messages
             Text = integrationEvent.Text,
         });
         await messagesHub.Clients.All.ReceiveMessage(createdMessage);
+        await messagesHub.Clients.All.EnableInput();
     }
 }

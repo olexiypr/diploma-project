@@ -74,12 +74,12 @@ public class CypherQueryGenerator(IEmbeddingGenerationService embeddingGeneratio
                                WITH [{string.Join(", ", keywordEmbedding.ToArray())}] AS question_embedding
                                    CALL db.index.vector.queryNodes(
                                        '{DEFAULT_VECTOR_INDEX_NAME}',
-                                       10, 
+                                       50, 
                                        question_embedding
                                        ) 
                                    YIELD node AS e1, score
                                    MATCH (e1)-[r]-(e2:ENTITY)-[r2:{DEFAULT_RELATION_WITH_TOPIC_NAME}]->(dc:{DEFAULT_CHUNK_VARIABLE_NAME})
-                                   WHERE dc.topicId = {topicId}
+                                   WHERE dc.topicId = '{topicId}'
                                    RETURN '(' + COALESCE(e1.name,'') + ')-[:' + COALESCE(type(r),'') + ']->(' + COALESCE(e2.name,'') + ')' as triplet, dc.text as text
                                ";
         return query;

@@ -24,10 +24,11 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminAccess", policy => policy.RequireAssertion(async context =>
     {
-        var httpClient = new HttpClient();
+        /*var httpClient = new HttpClient();
         httpClient.BaseAddress = new Uri(builder.Configuration["IdentityService:BaseUrl"]!);
         var identityServiceHttpClient = new IdentityServiceHttpClient(httpClient);
-        return await identityServiceHttpClient.IsUserAdmin(context.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")!.Value);
+        return await identityServiceHttpClient.IsUserAdmin(context.User.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")!.Value);*/
+        return true;
     }));
 });
 
@@ -44,8 +45,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-var mongoDbService = app.Services.GetRequiredService<MongoDbService>();
-await mongoDbService.SeedData();
+/*var mongoDbService = app.Services.GetRequiredService<MongoDbService>();
+await mongoDbService.SeedData();*/
 
 
 

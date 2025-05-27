@@ -21,12 +21,22 @@ public class MessagesHub(IMessageService messageService) : Hub<IMessagesClient>
         await Groups.AddToGroupAsync(Context.ConnectionId, topicId);
     }
 
-    public async Task CloseTopic(int topicId)
+    public async Task CloseTopic(string topicId)
     {
         //TODO: Verify that topic exists
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, topicId.ToString());
     }
 
+    public async Task DisableMessageInput(string topicId)
+    {
+        await Clients.Group(topicId).DisableInput();
+    }
+    
+    public async Task EnableMessageInput(string topicId)
+    {
+        await Clients.Group(topicId).DisableInput();
+    }
+    
     public async Task CreateMessage(string topicId, CreateMessageRequestModel requestModel)
     {
         //TODO: Verify that topic exists
@@ -36,7 +46,7 @@ public class MessagesHub(IMessageService messageService) : Hub<IMessagesClient>
             throw new UnauthorizedAccessException();
         }
         var result = await messageService.Create(topicId, cognitoUserId, requestModel);
-        await Clients.Group(topicId.ToString()).ReceiveMessage(result);
+        await Clients.OthersInGroup(topicId).ReceiveMessage(result);
         //await Clients.GroupExcept(topicId.ToString(), []).ReceiveMessage(result);
     }
 }

@@ -11,6 +11,7 @@
         <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.0-preview.5" />
         <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.0-preview.5" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="Quartz" Version="3.13.1" />
         <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.13.1" />
         <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />

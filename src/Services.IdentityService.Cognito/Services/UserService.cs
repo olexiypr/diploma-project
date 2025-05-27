@@ -81,6 +81,7 @@ public class UserService(IdentityServiceDbContext dbContext, JwtTokenSettingsPro
             Id = userEntity.Id,
             FirstName = userEntity.FirstName,
             LastName = userEntity.LastName,
+            Role = (int)userEntity.Role
         };
     }
     

@@ -20,6 +20,7 @@ public class AddNewMessageIntegrationEventHandler(
 {
     public async Task Handle(AddNewMessageIntegrationEvent integrationEvent)
     {
+        Console.WriteLine("AddNewMessageIntegrationEventHandler");
         var chunks = textSplitter.Split(integrationEvent.MessageText, integrationEvent.MessageText.Length / 20, integrationEvent.MessageText.Length / 60);
         foreach (var chunk in chunks)
         {

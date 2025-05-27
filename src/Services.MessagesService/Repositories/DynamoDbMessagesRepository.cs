@@ -8,18 +8,15 @@ using Amazon.DynamoDBv2.DocumentModel;
 using Microsoft.Extensions.Options;
 using Services.MessagesService.Entities;
 using Services.MessagesService.Exceptions;
-using Services.MessagesService.Mappers;
-using Services.MessagesService.RequestModels;
-using Services.MessagesService.ResponseModels;
 using Services.MessagesService.Settings;
 
 namespace Services.MessagesService.Repositories;
 
-public class DynamoDbMessagesRepository(IMessageMapper messageMapper, IOptions<DynamoDbSettings> dynamoDbSettings, IAmazonDynamoDB amazonDynamoDb) : IMessagesRepository
+public class DynamoDbMessagesRepository(IOptions<DynamoDbSettings> dynamoDbSettings, IAmazonDynamoDB amazonDynamoDb) : IMessagesRepository
 {
     public async Task<bool> Create(MessageEntity messageEntity)
     {
-        var requestAsJson = JsonSerializer.Serialize(messageEntity);
+        var requestAsJson = JsonSerializer.Serialize<MessageEntity>(messageEntity);
         var requestAsDocument = Document.FromJson(requestAsJson);
         var requestAsAttributes = requestAsDocument.ToAttributeMap();
         var putItemRequest = new PutItemRequest
@@ -59,7 +56,7 @@ public class DynamoDbMessagesRepository(IMessageMapper messageMapper, IOptions<D
         var queryRequest = new QueryRequest
         {
             TableName = dynamoDbSettings.Value.TableName,
-            Limit = 10,
+            Limit = 100,
             Select = Select.ALL_ATTRIBUTES,
             KeyConditionExpression = $"{GetAttributeJsonPropertyName(typeof(MessageEntity), nameof(DynamoDBHashKeyAttribute))} = :pkValue",
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
@@ -68,11 +65,7 @@ public class DynamoDbMessagesRepository(IMessageMapper messageMapper, IOptions<D
             }
         };
         var response = await amazonDynamoDb.QueryAsync(queryRequest);
-        if (response.Count < 1)
-        {
-            throw new MessageNotFoundException();
-        }
-        
+        var a = Document.FromAttributeMap(response.Items[0]).ToJson();
         return response.Items.Select(i => JsonSerializer.Deserialize<MessageEntity>(Document.FromAttributeMap(i).ToJson()))!;
     }
 

@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using EventBus;
 using Microsoft.SemanticKernel.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.Ollama;
 using Neo4j.Driver;
 using Services.LlmService.EventBus.Events;
 using Services.LlmService.Services;
@@ -19,14 +20,16 @@ public class GenerateTextIntegrationEventHandler(
     [Experimental("SKEXP0010")]
     public async Task Handle(GenerateTextIntegrationEvent integrationEvent)
     {
-        Console.WriteLine($"Generating text in integration event for integration event {integrationEvent.DateCreated}");
+        Console.WriteLine("GenerateTextIntegrationEventHandler");
         var keywords = await keywordExtractorService.ExtractKeywords(integrationEvent.LastMessageText);
         var graphRelations = await GetRelationsFromDbByKeywordsForTopic(keywords, integrationEvent.TopicId);
         var chunkResults = graphRelations.ToArray();
 
         var systemPrompt = @"
-            YOU ARE A MASTERFUL FICTION WRITER SPECIALIZING IN SHORT STORY CONTINUATIONS. YOUR PURPOSE IS TO READ THE USER'S INITIAL STORY SEGMENT AND CONTINUE IT FLUIDLY, MAINTAINING THE SAME TONE, STYLE, AND STORY WORLD.
-
+            You are a dungeon master for a text-based game. Your task is to generate story continuations based on the current context data retrieved from a Neo4j database.
+            This context includes the story's progress, characters, locations, and events. Additionally, incorporate the story's description written by the admin, the story name, and relevant general information to ensure coherence and immersion.
+            When creating continuations, maintain narrative consistency and creativity, weaving player actions and game lore naturally into the unfolding story.
+            Always consider the given context and metadata to produce meaningful and engaging content.
             ###INSTRUCTIONS###
 
             - YOU MUST READ the USER'S INITIAL STORY SETUP carefully
@@ -73,10 +76,10 @@ public class GenerateTextIntegrationEventHandler(
         var context = $@"
             ######################
             Structured data:
-            {string.Join(Environment.NewLine, chunkResults.Select(c => c.Triplet).Take(50).ToArray())}
+            {string.Join(Environment.NewLine, chunkResults.Select(c => c.Triplet).ToArray())}
             ######################
             Unstructured data:
-            {string.Join(Environment.NewLine, chunkResults.Select(c => c.ChunkText).Take(50).ToArray())}
+            {string.Join(Environment.NewLine, chunkResults.Select(c => c.ChunkText).ToArray())}
             ";
 
         var prompt = $@"
@@ -144,27 +147,31 @@ public class GenerateTextIntegrationEventHandler(
             {integrationEvent.Description}    
 
             **STORY_MOOD**
-            {integrationEvent.AdditionalTopicDescription}         
+            {integrationEvent.AdditionalTopicDescription}    
+
+            **PREVIOUS_LLM_STORY**
+            {integrationEvent.PreviousLlmMessage}     
 
             ###WHAT NOT TO DO###
 
             - DO NOT GENERATE RANDOM OR UNCONNECTED EVENTS
             - NEVER IGNORE THE RELATIONSHIPS IN GRAPH_DATA (e.g., saying enemies are friends)
-            - AVOID COMPLEX VOCABULARY OR LONG SENTENCES (MODEL IS 1B)
+            - AVOID COMPLEX VOCABULARY OR LONG SENTENCES (MODEL IS 4B)
             - DO NOT INTRODUCE NEW CHARACTERS OR LOCATIONS UNLESS IMPLIED
             - NEVER ASK QUESTIONS OR BREAK THE FOURTH WALL
             - DO NOT CHANGE CHARACTER MOTIVATIONS FROM PRIOR CONTEXT
             - NEVER WRITE IN A STYLE THAT IS INCONSISTENT WITH PRIOR_MESSAGE
             - NEVER GENERATE A STORY THAT IS LONGER THAN THE PRIOR_MESSAGE
             - NEVER GENERATE A STORY THAT IS SHORTER THAN 70 WORDS
+            - NEVER GENERATE A STORY SIMILAR TO PREVIOUS_LLM_STORY
+            - NEVER INCLUDE ANYTHING LIKE THIS (Ostap)-[BOUND_TO]->(Creature) IN RESPONSE
             ######################
             Story:";
         var chatHistory = new ChatHistory();
         chatHistory.AddSystemMessage(systemPrompt);
         chatHistory.AddSystemMessage("USER HAS GENERATED FOLLOWING STORY: " + integrationEvent.LastMessageText);
         chatHistory.AddUserMessage(prompt);
-        var result = await completionService.GetChatMessageContentsAsync(chatHistory);
-        Console.WriteLine($"Response for event {integrationEvent.DateCreated} generated!");
+        var result = await completionService.GetChatMessageContentsAsync(chatHistory, new OllamaPromptExecutionSettings {Temperature = 0.99f});
         await SendResponseThroughEventBus(result[0].ToString(), integrationEvent.TopicId);
     }
 

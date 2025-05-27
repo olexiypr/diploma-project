@@ -10,7 +10,8 @@ public class MessageEntity
     public string Id { get; set; }
     public int CreatedBy { get; set; }
     public string Text { get; set; }
-    public DateTime DateCreated { get; } = DateTime.UtcNow;
+    public string CreatorName { get; set; }
+    public DateTime DateCreated { get; set; } = DateTime.UtcNow;
     public MessageCreators MessageCreator { get; set; }
     [JsonPropertyName("topicId")]
     [DynamoDBHashKey]
