@@ -21,6 +21,9 @@ using Services.MessagesService.SignalR.Hubs;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+Console.WriteLine("Run Services.IdentityService.Cognito with Environment - " + env);
+builder.Configuration.AddJsonFile($"appsettings.{env}.json", false, true).AddEnvironmentVariables();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -46,7 +49,7 @@ builder.Services.Configure<NewMessageGenerationBackgroundJobSettings>(setting =>
     {
         minutesNumber = builder.Configuration.GetValue<int>("GenerateNewMessageOffset");
     }
-    setting.GenerateNewMessageOffset = TimeSpan.FromMinutes(minutesNumber);
+    setting.GenerateNewMessageOffset = TimeSpan.FromSeconds(10);
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

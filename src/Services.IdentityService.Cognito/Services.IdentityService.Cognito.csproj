@@ -23,18 +23,18 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
       <Reference Include="Microsoft.AspNetCore.Authentication.JwtBearer">
         <HintPath>..\..\..\..\.nuget\packages\microsoft.aspnetcore.authentication.jwtbearer\8.0.12\lib\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll</HintPath>
       </Reference>
       <Reference Include="Microsoft.IdentityModel.Tokens">
         <HintPath>..\..\..\..\.nuget\packages\microsoft.identitymodel.tokens\7.1.2\lib\net8.0\Microsoft.IdentityModel.Tokens.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
